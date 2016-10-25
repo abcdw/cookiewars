@@ -9,4 +9,5 @@
             :duration 15
             :left  {:title "Cookies"
                     :count 10}
-            :right {:title "Candies"}}})
+            :right {:title "Candies"
+                    :count 10}}})

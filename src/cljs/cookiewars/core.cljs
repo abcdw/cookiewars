@@ -54,6 +54,7 @@
 
 (defn t-comp []
   (js/setInterval #(rf/dispatch-sync [:tick :left]) 1000)
+  (js/setInterval #(rf/dispatch-sync [:tick :right]) 1000)
   [:div])
 
 (defn participant [side]
@@ -82,15 +83,16 @@
 
 (defn battle-field []
   [:div.row
-   [participant :left]])
+   [participant :left]
+   [participant :right]
+   ])
 
 (defn battle-comp []
   [:div.container
    [:div.row [:h1.text-xs-center (:title battle)]]
    [battle-titles]
    [battle-field]
-   [t-comp]
-   ])
+   [t-comp]])
 
 (defn home-page []
   [battle-comp])
