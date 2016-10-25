@@ -2,11 +2,28 @@
   (:require [re-frame.core :refer [reg-sub]]))
 
 (reg-sub
-  :page
-  (fn [db _]
-    (:page db)))
+ :page
+ (fn [db _]
+   (:page db)))
 
 (reg-sub
-  :docs
-  (fn [db _]
-    (:docs db)))
+ :docs
+ (fn [db _]
+   (:docs db)))
+
+(reg-sub
+ :titles
+ (fn [db _]
+   {:left (get-in db [:battle :left :title])
+    :right (get-in db [:battle :right :title])}))
+
+(reg-sub
+ :img
+ (fn [db _]
+   (:img db)))
+
+(reg-sub
+ :count
+ (fn [db [_ participant]]
+   (do
+     (get-in db [:battle participant :count]))))

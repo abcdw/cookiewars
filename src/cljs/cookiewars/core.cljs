@@ -37,23 +37,59 @@
     [:div.col-md-12
      "Cookiewars is real"]]])
 
+
 (defonce battle {:title "Decide cookiewarrior"
                  :left "Cookies"
                  :right "Candies"})
 
 (defn battle-titles []
+  (when-let [titles @(rf/subscribe [:titles])]
+    [:div.row
+     [:div.col-xs-6
+      [:h3.text-xs-center
+       (:left titles)]]
+     [:div.col-xs-6
+      [:h3.text-xs-center
+       (:right titles)]]]))
+
+(defn t-comp []
+  (js/setInterval #(rf/dispatch-sync [:tick :left]) 1000)
+  [:div])
+
+(defn participant [side]
+  (let [img-url @(rf/subscribe [:img])
+        count @(rf/subscribe [:count side])]
+      [:div.col-xs-6
+       [:div.container
+        [:div.row
+         [:div.text-xs-center
+          [:img {:src img-url
+                 :on-click #(rf/dispatch [:click side])}]
+          ]]
+
+        [:div.row
+         [:div.text-xs-center
+          (str "count: " count "!")]]
+        [:div.row
+         [:div.text-xs-center
+          [:progress.porgress-striped.progress-info.progress-animated
+           {:style {:width "80%"}
+            :value count
+            :max 25}
+           ]]]]])
+  )
+
+
+(defn battle-field []
   [:div.row
-   [:div.col-xs-6
-    [:h3.text-xs-center
-     (:left battle)]]
-   [:div.col-xs-6
-    [:h3.text-xs-center
-     (:right battle)]]])
+   [participant :left]])
 
 (defn battle-comp []
   [:div.container
    [:div.row [:h1.text-xs-center (:title battle)]]
    [battle-titles]
+   [battle-field]
+   [t-comp]
    ])
 
 (defn home-page []
