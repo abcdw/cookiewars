@@ -1,7 +1,7 @@
 (defproject cookiewars "0.1.0-SNAPSHOT"
 
-  :description "FIXME: write description"
-  :url "http://example.com/FIXME"
+  :description "Real cookiewars"
+  :url "https://cookiewars.herokuapp.com/"
 
   :dependencies [[bouncer "1.0.0"]
                  [ch.qos.logback/logback-classic "1.1.7"]
@@ -47,7 +47,7 @@
    :nrepl-port 7002
    :css-dirs ["resources/public/css"]
    :nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}
-  
+
 
   :profiles
   {:uberjar {:omit-source true
@@ -63,8 +63,8 @@
                  :pretty-print false
                  :closure-warnings
                  {:externs-validation :off :non-standard-jsdoc :off}}}}}
-             
-             
+
+
              :aot :all
              :uberjar-name "cookiewars.jar"
              :source-paths ["env/prod/clj"]
@@ -97,9 +97,9 @@
                       :source-map true
                       :optimizations :none
                       :pretty-print true}}}}
-                  
-                  
-                  
+
+
+
                   :doo {:build "test"}
                   :source-paths ["env/dev/clj" "test/clj"]
                   :resource-paths ["env/dev/resources"]
@@ -116,7 +116,7 @@
                       :main "cookiewars.doo-runner"
                       :optimizations :whitespace
                       :pretty-print true}}}}
-                  
+
                   }
    :profiles/dev {}
    :profiles/test {}})
