@@ -25,7 +25,7 @@
 
 (defn dec-count [count]
   (if (pos? count)
-    (- count (/ (* count 25) 100))
+    (- count (/ (* count 0.3) 100))
     0))
 
 (reg-event-db

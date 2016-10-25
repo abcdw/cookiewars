@@ -53,8 +53,8 @@
        (:right titles)]]]))
 
 (defn t-comp []
-  (js/setInterval #(rf/dispatch-sync [:tick :left]) 1000)
-  (js/setInterval #(rf/dispatch-sync [:tick :right]) 1000)
+  (js/setInterval #(rf/dispatch-sync [:tick :left]) 10)
+  (js/setInterval #(rf/dispatch-sync [:tick :right]) 10)
   [:div])
 
 (defn participant [side]
@@ -70,7 +70,7 @@
 
         [:div.row
          [:div.text-xs-center
-          (str "count: " count "!")]]
+          (str "count: " (int count) "!")]]
         [:div.row
          [:div.text-xs-center
           [:progress.porgress-striped.progress-info.progress-animated
