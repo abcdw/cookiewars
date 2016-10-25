@@ -35,14 +35,29 @@
   [:div.container
    [:div.row
     [:div.col-md-12
-     "this is the story of cookiewars... work in progress"]]])
+     "Cookiewars is real"]]])
+
+(defonce battle {:title "Decide cookiewarrior"
+                 :left "Cookies"
+                 :right "Candies"})
+
+(defn battle-titles []
+  [:div.row
+   [:div.col-xs-6
+    [:h3.text-xs-center
+     (:left battle)]]
+   [:div.col-xs-6
+    [:h3.text-xs-center
+     (:right battle)]]])
+
+(defn battle-comp []
+  [:div.container
+   [:div.row [:h1.text-xs-center (:title battle)]]
+   [battle-titles]
+   ])
 
 (defn home-page []
-  [:div.container
-   (when-let [docs @(rf/subscribe [:docs])]
-     [:div.row>div.col-sm-12
-      [:div {:dangerouslySetInnerHTML
-             {:__html (md->html docs)}}]])])
+  [battle-comp])
 
 (def pages
   {:home #'home-page
