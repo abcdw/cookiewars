@@ -8,7 +8,8 @@
             [ajax.core :refer [GET POST]]
             [cookiewars.ajax :refer [load-interceptors!]]
             [cookiewars.handlers]
-            [cookiewars.subscriptions])
+            [cookiewars.subscriptions]
+            [cognitect.transit :as t])
   (:import goog.History))
 
 (defn nav-link [uri title page collapsed?]
@@ -38,10 +39,34 @@
      "Cookiewars is real"]]])
 
 
-(defonce battle {:title "Decide cookiewarrior"
-                 :left "Cookies"
-                 :right "Candies"})
+;; ----------- ws stuff -------------------
+;; ----------------------------------------
+(defonce ws-chan (atom nil))
 
+(def json-reader (t/reader :json))
+(def json-writer (t/writer :json))
+
+(defn send-transit-msg!
+  [msg]
+  (if @ws-chan
+    (.send @ws-chan msg)
+    (throw (js/Error. "Websocket is not available!"))))
+
+;; (send-transit-msg! "test")
+
+(defn make-websocket! [url]
+  (println "attempting to connect websocket")
+  (if-let [chan (js/WebSocket. url)]
+    (do
+      (set! (.-onmessage chan)
+            (fn [msg] (rf/dispatch [:new-server-event (.-data msg)])))
+      (reset! ws-chan chan)
+      (println "Websocket connection established with: " url))
+    (throw (js/Error. "Websocket connection failed!"))))
+
+
+;; ----------- battle components ----------
+;; ----------------------------------------
 (defn battle-titles []
   (when-let [titles @(rf/subscribe [:titles])]
     [:div.row
@@ -59,40 +84,43 @@
 
 (defn participant [side]
   (let [img-url @(rf/subscribe [:img])
-        count @(rf/subscribe [:count side])]
-      [:div.col-xs-6
+        count @(rf/subscribe [:count side])
+        clicks @(rf/subscribe [:clicks side])]
+
        [:div.container
         [:div.row
          [:div.text-xs-center
           [:img {:src img-url
-                 :on-click #(rf/dispatch [:click side])}]
-          ]]
+                 :on-click #(rf/dispatch [:click side])}]]]
 
         [:div.row
          [:div.text-xs-center
-          (str "count: " (int count) "!")]]
+          (str "clicks: " (int clicks) "!")]]
+
         [:div.row
          [:div.text-xs-center
           [:progress.porgress-striped.progress-info.progress-animated
            {:style {:width "80%"}
             :value count
-            :max 25}
-           ]]]]])
-  )
-
+            :max 70}]]]
+        ]))
 
 (defn battle-field []
   [:div.row
-   [participant :left]
-   [participant :right]
-   ])
+   [:div.col-xs-6
+    [participant :left]]
+   [:div.col-xs-6
+    [participant :right]]])
 
 (defn battle-comp []
-  [:div.container
-   [:div.row [:h1.text-xs-center (:title battle)]]
-   [battle-titles]
-   [battle-field]
-   [t-comp]])
+  (let [battle-title @(rf/subscribe [:battle-title])]
+    [:div.container
+     [:div.row [:h1.text-xs-center battle-title]]
+     [battle-titles]
+     [battle-field]
+     [t-comp]]))
+
+;; ---------------------------------------
 
 (defn home-page []
   [battle-comp])
@@ -106,8 +134,8 @@
    [navbar]
    [(pages @(rf/subscribe [:page]))]])
 
-;; -------------------------
 ;; Routes
+;; -------------------------
 (secretary/set-config! :prefix "#")
 
 (secretary/defroute "/" []
@@ -116,9 +144,9 @@
 (secretary/defroute "/about" []
   (rf/dispatch [:set-active-page :about]))
 
-;; -------------------------
 ;; History
 ;; must be called after routes have been defined
+;; -------------------------
 (defn hook-browser-navigation! []
   (doto (History.)
     (events/listen
@@ -127,8 +155,8 @@
         (secretary/dispatch! (.-token event))))
     (.setEnabled true)))
 
-;; -------------------------
 ;; Initialize app
+;; -------------------------
 (defn fetch-docs! []
   (GET (str js/context "/docs") {:handler #(rf/dispatch [:set-docs %])}))
 
@@ -140,4 +168,5 @@
   (load-interceptors!)
   (fetch-docs!)
   (hook-browser-navigation!)
+  (make-websocket! (str "ws://" (.-host js/location) "/ws"))
   (mount-components))

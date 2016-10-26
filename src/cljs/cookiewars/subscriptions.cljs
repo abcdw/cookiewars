@@ -23,7 +23,16 @@
    (:img db)))
 
 (reg-sub
+ :battle-title
+ (fn [db _]
+   (get-in db [:battle :title])))
+
+(reg-sub
  :count
  (fn [db [_ participant]]
-   (do
-     (get-in db [:battle participant :count]))))
+   (get-in db [:battle participant :count])))
+
+(reg-sub
+ :clicks
+ (fn [db [_ participant]]
+   (get-in db [:battle participant :clicks])))

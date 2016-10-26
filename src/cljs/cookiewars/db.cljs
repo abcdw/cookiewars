@@ -5,9 +5,12 @@
 (def default-db
   {:page :home
    :img img-url
+   :ws-chan (atom nil)
    :battle {:title "Decide cookiewarrior"
             :duration 15
             :left  {:title "Cookies"
-                    :count 10}
+                    :count 10
+                    :clicks 0}
             :right {:title "Candies"
-                    :count 10}}})
+                    :count 10
+                    :clicks 0}}})
