@@ -99,7 +99,7 @@
 
         [:div.row
          [:div.text-xs-center
-          [:progress.porgress-striped.progress-info.progress-animated
+          [:progress
            {:style {:width "80%"}
             :value count
             :max 70}]]]
