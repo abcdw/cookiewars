@@ -82,6 +82,8 @@
   (js/setInterval #(rf/dispatch-sync [:tick :right]) 10)
   [:div])
 
+;; (println @(rf/subscribe [:img :left]))
+
 (defn participant [side]
   (let [img-url @(rf/subscribe [:img side])
         count @(rf/subscribe [:count side])
@@ -91,7 +93,11 @@
         [:div.row
          [:div.text-xs-center
           [:img {:src img-url
-                 :on-click #(rf/dispatch [:click side])}]]]
+                 :height 250
+                 ;; :width 250
+                 :on-drag-start #(.preventDefault %)
+                 :on-mouse-down #(rf/dispatch [:click side])
+                 }]]]
 
         [:div.row
          [:div.text-xs-center
