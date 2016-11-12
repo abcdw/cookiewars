@@ -80,7 +80,7 @@
 
 (defonce timers [(js/setInterval #(rf/dispatch-sync [:tick :left]) 10)
                  (js/setInterval #(rf/dispatch-sync [:tick :right]) 10)
-                 (js/setInterval #(rf/dispatch [:request-updates]) 5000)])
+                 (js/setInterval #(rf/dispatch [:request-updates]) 500)])
 
 ;; (println @(rf/subscribe [:img :left]))
 
