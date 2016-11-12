@@ -83,7 +83,7 @@
   [:div])
 
 (defn participant [side]
-  (let [img-url @(rf/subscribe [:img])
+  (let [img-url @(rf/subscribe [:img side])
         count @(rf/subscribe [:count side])
         clicks @(rf/subscribe [:clicks side])]
 

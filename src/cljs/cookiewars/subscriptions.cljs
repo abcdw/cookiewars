@@ -19,8 +19,8 @@
 
 (reg-sub
  :img
- (fn [db _]
-   (:img db)))
+ (fn [db [_ side]]
+   (get-in db [:battle side :img])))
 
 (reg-sub
  :battle-title
