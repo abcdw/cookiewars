@@ -29,7 +29,8 @@
                  [ring/ring-defaults "0.2.1"]
                  [secretary "1.2.3"]
                  [selmer "1.10.0"]
-                 [cheshire "5.6.3"]]
+                 [cheshire "5.6.3"]
+                 [re-frisk "0.2.2"]]
 
   :min-lein-version "2.0.0"
 
@@ -97,7 +98,8 @@
                       :output-dir "target/cljsbuild/public/js/out"
                       :source-map true
                       :optimizations :none
-                      :pretty-print true}}}}
+                      :pretty-print true
+                      }}}}
 
 
 

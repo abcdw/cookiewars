@@ -1,15 +1,16 @@
 (ns cookiewars.core
-  (:require [reagent.core :as r]
-            [re-frame.core :as rf]
-            [secretary.core :as secretary]
+  (:require [ajax.core :refer [GET POST]]
+            [cognitect.transit :as t]
+            [cookiewars.ajax :refer [load-interceptors!]]
+            cookiewars.handlers
+            cookiewars.subscriptions
             [goog.events :as events]
             [goog.history.EventType :as HistoryEventType]
             [markdown.core :refer [md->html]]
-            [ajax.core :refer [GET POST]]
-            [cookiewars.ajax :refer [load-interceptors!]]
-            [cookiewars.handlers]
-            [cookiewars.subscriptions]
-            [cognitect.transit :as t])
+            [re-frame.core :as rf]
+            [re-frisk.core :refer [enable-re-frisk!]]
+            [reagent.core :as r]
+            [secretary.core :as secretary])
   (:import goog.History))
 
 (defn nav-link [uri title page collapsed?]
@@ -171,8 +172,9 @@
 
 (defn init! []
   (rf/dispatch-sync [:initialize-db])
+  (enable-re-frisk!)
   (load-interceptors!)
-  (fetch-docs!)
+  ;; (fetch-docs!)
   (hook-browser-navigation!)
   (make-websocket! (str "ws://" (.-host js/location) "/ws"))
   (mount-components))
