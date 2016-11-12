@@ -30,9 +30,16 @@
  (fn [db [_ side]]
    (->
     (update-in db [:battle side :count] inc)
-    (update-in [:battle side :clicks] inc)
-    )
-   ))
+    (update-in [:battle side :clicks] inc))))
+
+(reg-event-db
+ :update-stats
+ (fn [db [_ stats]]
+   (let [st (merge stats {:updated-at (str (js/Date.))})]
+     ;; (println "updated-stats: " stats)
+     ;; (println "updated-stats: " (:count stats))
+
+     (assoc-in db [:stats] st))))
 
 (reg-event-db
  :click
@@ -52,15 +59,25 @@
 (reg-event-db
  :tick
  (fn [db [_ side]]
-   (update-in db [:battle side :count] dec-count)
-   ))
+     (update-in db [:battle side :count] dec-count)))
+
+(reg-event-db
+ :request-updates
+ (fn [db [_ side]]
+   (do
+     (cookiewars.core/send-transit-msg!
+      (str {:cmd "update-stats"}))
+     db)))
+
 
 (reg-event-db
  :new-server-event
  (fn [db [_ event]]
-   (let [{:keys [cmd side]} (read-string event)]
+   (let [ev (read-string event)
+         cmd (:cmd ev)]
      (do
        (println ":event" (read-string event))
-       (if (= cmd "inc")
-           (dispatch [:inc side]))
+       (case cmd
+         "inc" (dispatch [:inc (:side ev)])
+         "update-stats" (dispatch [:update-stats (:stats ev)]))
        db))))

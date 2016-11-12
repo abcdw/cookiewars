@@ -8,6 +8,7 @@
 (def default-db
   {:page :home
    :ws-chan (atom nil)
+   :stats {:count 1}
    :battle {:title "Decide cookiewarrior"
             :duration 15
             :left  {:title "Cookies"

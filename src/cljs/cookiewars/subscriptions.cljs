@@ -36,3 +36,8 @@
  :clicks
  (fn [db [_ participant]]
    (get-in db [:battle participant :clicks])))
+
+(reg-sub
+ :stats
+ (fn [db _]
+   (get-in db [:stats])))

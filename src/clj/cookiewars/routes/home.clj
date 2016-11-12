@@ -16,6 +16,10 @@
 (defn inc-clicks [side channel]
   (send! channel (str {:cmd "inc" :side side})))
 
+(defn send-stats [channel]
+  ;; (println "sent count: " (count @channels))
+  (send! channel (str {:cmd "update-stats" :stats {:count (count @channels)}})))
+
 ;; (println channels)
 ;; (loop []
 ;; (map #(inc-clicks :right %) @channels)
@@ -24,24 +28,26 @@
 ;;   (recur))
 
 (defn connect! [channel]
-  (println "channel open" channel)
+  (println "channel opened:" channel)
   (swap! channels conj channel))
 
 (defn disconnect! [channel status]
   (println "channel closed:" status)
   (swap! channels #(remove #{channel} %)))
 
-(defn handle-msg [msg]
-  (println "new message: " msg)
-  (let [side (:side (clojure.edn/read-string msg))]
-    (doseq [channel @channels]
-      (inc-clicks side channel))))
+(defn handle-msg [msg channel]
+  ;; (println "new message from client: " msg)
+  (let [ev (clojure.edn/read-string msg)]
+    (case (:cmd ev)
+      "inc" (doseq [channel @channels]
+              (inc-clicks (:side ev) channel))
+      "update-stats" (send-stats channel))))
 
 (defn ws-handler [request]
   (with-channel request channel
     (connect! channel)
     (on-close channel (partial disconnect! channel))
-    (on-receive channel #(handle-msg %))))
+    (on-receive channel #(handle-msg % channel))))
 
 (defroutes home-routes
   (GET "/" []
@@ -50,3 +56,6 @@
   (GET "/docs" []
        (-> (response/ok (-> "docs/docs.md" io/resource slurp))
        (response/header "Content-Type" "text/plain; charset=utf-8"))))
+;; (do
+;;   (cookiewars.core/-main)
+;;   (cookiewars.figwheel/start-fw))

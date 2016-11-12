@@ -78,10 +78,9 @@
       [:h3.text-xs-center
        (:right titles)]]]))
 
-(defn t-comp []
-  (js/setInterval #(rf/dispatch-sync [:tick :left]) 10)
-  (js/setInterval #(rf/dispatch-sync [:tick :right]) 10)
-  [:div])
+(defonce timers [(js/setInterval #(rf/dispatch-sync [:tick :left]) 10)
+                 (js/setInterval #(rf/dispatch-sync [:tick :right]) 10)
+                 (js/setInterval #(rf/dispatch [:request-updates]) 5000)])
 
 ;; (println @(rf/subscribe [:img :left]))
 
@@ -119,13 +118,21 @@
    [:div.col-xs-6
     [participant :right]]])
 
+(defn stat-comp []
+  (let [stats @(rf/subscribe [:stats])
+        online-count (:count stats)]
+    [:div.row
+     [:hr]
+     [:div.col-xs-6
+      [:h3 (str "Online: " online-count)]]]))
+
 (defn battle-comp []
   (let [battle-title @(rf/subscribe [:battle-title])]
     [:div.container
      [:div.row [:h1.text-xs-center battle-title]]
      [battle-titles]
      [battle-field]
-     [t-comp]]))
+     [stat-comp]]))
 
 ;; ---------------------------------------
 
