@@ -28,6 +28,11 @@
    (get-in db [:anim-elems])))
 
 (reg-sub
+ :animation
+ (fn [db _]
+   (get-in db [:animation])))
+
+(reg-sub
  :img
  (fn [db [_ side]]
    (get-in db [:config side :img])))

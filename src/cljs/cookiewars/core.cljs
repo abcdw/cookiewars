@@ -91,7 +91,8 @@
         count @(rf/subscribe [:count side])
         title @(rf/subscribe [:title side])
         clicks @(rf/subscribe [:clicks side])
-        local-clicks @(rf/subscribe [:local-clicks side])]
+        local-clicks @(rf/subscribe [:local-clicks side])
+        animation-type @(rf/subscribe [:animation])]
 
        [:div.container
         [:div.row
@@ -119,7 +120,7 @@
                                     ;; (println oth-pt
                                     ;;          abs-pt)
                                     ;; (swap! nb conj abs-pt)
-                                    (rf/dispatch [:click side {:pt rel-pt :tp 1}])))
+                                    (rf/dispatch [:click side {:pt rel-pt :tp animation-type}])))
             }]]]
 
         [:div.row
@@ -230,6 +231,10 @@
 
 (secretary/defroute "/about" []
   (rf/dispatch [:set-active-page :about]))
+
+(secretary/defroute "/adm" []
+  (rf/dispatch [:set-active-page :home])
+  (rf/dispatch [:set-animation 2]))
 
 ;; History
 ;; must be called after routes have been defined

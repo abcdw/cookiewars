@@ -21,6 +21,11 @@
     (assoc db :page page)))
 
 (reg-event-db
+ :set-animation
+ (fn [db [_ animation]]
+   (assoc db :animation animation)))
+
+(reg-event-db
   :set-docs
   (fn [db [_ docs]]
     (assoc db :docs docs)))
