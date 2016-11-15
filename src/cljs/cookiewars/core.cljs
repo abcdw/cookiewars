@@ -187,8 +187,15 @@
   (let [nb @(rf/subscribe [:anim-elems])]
     [:div.bubble-container
      (for [[i elem] (map-indexed vector nb)]
-       ^{:key i} [nbubble elem])]
-       ))
+       ^{:key i} [nbubble elem])]))
+
+(defn start-comp []
+  (let [anim-type @(rf/subscribe [:animation])]
+    (if (= anim-type 2)
+      [:div.row
+       [:button.btn {:on-click #(send-transit-msg! (str {:cmd "start-competition"}))} "start"]
+       [:button.btn {:on-click #(send-transit-msg! (str {:cmd "restart-competition"}))} "restart"]])
+    ))
 
 (defn battle-comp []
   (let [battle-title @(rf/subscribe [:battle-title])]
@@ -197,7 +204,8 @@
      [:div.row [:h1.text-xs-center battle-title]]
      [stat-comp]
      ;; [battle-titles]
-     [battle-field]]))
+     [battle-field]
+     [start-comp]]))
 
 ;; ---------------------------------------
 

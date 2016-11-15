@@ -14,21 +14,24 @@
 
 (def donut-img "http://rlv.zcache.com/kawaii_donut_delight_bold_colorful_sweet_sprinkles_round_pillow-rc199908d083d4f1e93b3bed867ad86ba_z6i0e_324.jpg")
 
-(def competitions [(atom
-                    {:stats {:users 0
-                             :started false
-                             :time-left 6
-                             :clicks {:left 0 :right 0}
-                             :update-at (java.util.Date.)}
-                     :channels #{}
-                     :config {:title "Decide"
-                              :left {:title "First"
-                                     :img cookie-img}
-                              :right {:title "Second"
-                                      :img donut-img}}})
-                   ])
+(def competitions [{:stats {:users 0
+                            :started false
+                            :time-left 15
+                            :clicks {:left 0 :right 0}
+                            :update-at (java.util.Date.)}
+                    :channels #{}
+                    :config {:title "Decide"
+                             :left {:title "First"
+                                    :img cookie-img}
+                             :right {:title "Second"
+                                     :img donut-img}}}])
 
-(def first-comp (first competitions))
+(def first-comp (atom (first competitions)))
+
+(defn restart-competition []
+  (def first-comp (atom (first competitions))))
+
+;; (restart-comp)
 
 ;; (def competitions (atom init-competitions))
 
@@ -86,7 +89,8 @@
               (inc-clicks ev channel))
       "update-stats" (send-stats channel)
       "update-config" (send-config channel)
-      "start-competition" (start-competition))))
+      "start-competition" (start-competition)
+      "restart-competition" (restart-competition))))
 
 (defn ws-handler [request]
   (with-channel request channel
