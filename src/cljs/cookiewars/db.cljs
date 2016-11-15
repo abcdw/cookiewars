@@ -9,6 +9,7 @@
   {:page :home
    :ws-chan (atom nil)
    :stats {:count 1}
+   :anim-elems []
    :config {:title "Decide cookiewarrior"
             :duration 15
             :left  {:title "Cookies"

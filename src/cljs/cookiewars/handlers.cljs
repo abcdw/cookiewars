@@ -27,10 +27,10 @@
 
 (reg-event-db
  :inc
- (fn [db [_ side]]
-   (->
-    (update-in db [:config side :count] inc)
-    (update-in [:config side :clicks] inc))))
+ (fn [db [_ ev]]
+   (let [side (:side ev)]
+     (println ev)
+     (update-in db [:anim-elems] conj (select-keys ev [:side :pt :tp])))))
 
 (reg-event-db
  :update-stats
@@ -44,13 +44,13 @@
 
 (reg-event-db
  :click
- (fn [db [_ side]]
+ (fn [db [_ side elem]]
    (do
-     ;; (println side " clicked")
      (cookiewars.core/send-transit-msg!
-      (str {:cmd "inc"
-            :side side}))
-     db)))
+      (str (merge {:cmd "inc" :side side} elem)))
+     (->
+      (update-in db [:config side :count] inc)
+      (update-in [:config side :clicks] inc)))))
 
 (defn dec-count [count]
   (if (pos? count)
@@ -61,6 +61,7 @@
  :tick
  (fn [db [_ side]]
      (update-in db [:config side :count] dec-count)))
+
 
 (reg-event-db
  :request-updates
@@ -79,7 +80,7 @@
      (do
        ;; (println ":event" (read-string event))
        (case cmd
-         "inc" (dispatch [:inc (:side ev)])
+         "inc" (dispatch [:inc ev])
          "update-stats" (dispatch [:update-stats (:stats ev)])
          "update-config" (dispatch [:update-config (:config ev)]))
        db))))

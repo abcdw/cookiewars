@@ -23,6 +23,11 @@
     (get-in db [:config side :title])))
 
 (reg-sub
+ :anim-elems
+ (fn [db _]
+   (get-in db [:anim-elems])))
+
+(reg-sub
  :img
  (fn [db [_ side]]
    (get-in db [:config side :img])))

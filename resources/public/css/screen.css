@@ -48,6 +48,7 @@ body {
   -webkit-animation: pop 2.5s ease-out forwards;
   -moz-animation: pop 2.5s ease-out forwards;
   animation: pop 2.5s ease-out forwards;
+  pointer-events: none;
 }
 
 .main-bubble {

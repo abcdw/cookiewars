@@ -37,10 +37,10 @@
 (defonce channels (atom #{}))
 ;; (send! (first @channels) (json/generate-string {:cmd "test"}))
 
-(defn inc-clicks [side channel]
+(defn inc-clicks [e channel]
   (if (get-in @first-comp [:stats :started])
-    (swap! first-comp update-in [:stats :clicks side] inc))
-  (send! channel (str {:cmd "inc" :side side})))
+    (swap! first-comp update-in [:stats :clicks (:side e)] inc))
+  (send! channel (str e)))
 
 (defn send-stats [channel]
   (send! channel (str {:cmd "update-stats" :stats (:stats @first-comp)})))
@@ -83,7 +83,7 @@
   (let [ev (clojure.edn/read-string msg)]
     (case (:cmd ev)
       "inc" (doseq [channel @channels]
-              (inc-clicks (:side ev) channel))
+              (inc-clicks ev channel))
       "update-stats" (send-stats channel)
       "update-config" (send-config channel)
       "start-competition" (start-competition))))

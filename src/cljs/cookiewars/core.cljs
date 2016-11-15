@@ -85,6 +85,7 @@
 
 ;; (println @(rf/subscribe [:img :left]))
 
+(def nb (r/atom []))
 (defn participant [side]
   (let [img-url @(rf/subscribe [:img side])
         count @(rf/subscribe [:count side])
@@ -99,12 +100,27 @@
          [:h3.text-xs-center clicks]]
         [:div.row
          [:div.text-xs-center
-          [:img {:src img-url
-                 :height 250
-                 ;; :width 250
-                 :on-drag-start #(.preventDefault %)
-                 :on-mouse-down #(rf/dispatch [:click side])
-                 }]]]
+          [:img
+           {:src img-url
+            :id side
+            :height 250
+            ;; :width 250
+            :on-drag-start #(.preventDefault %)
+            ;; :on-mouse-down #(rf/dispatch [:click side])
+            :on-mouse-down (fn [e] (let [target (.-target e)
+                                   rect (.getBoundingClientRect target)
+                                   abs-pt {:x (.-clientX e)
+                                           :y (.-clientY e)}
+                                   rel-pt {:x (- (.-clientX e) (.-left rect))
+                                           :y (- (.-clientY e) (.-top rect))}
+                                   ;; oth-pt {:x (.-screenX e)
+                                   ;;         :y (.-screenY e)}
+                                        ]
+                                    ;; (println oth-pt
+                                    ;;          abs-pt)
+                                    ;; (swap! nb conj abs-pt)
+                                    (rf/dispatch [:click side {:pt rel-pt :tp 1}])))
+            }]]]
 
         [:div.row
          [:div.text-xs-center
@@ -154,27 +170,27 @@
 ;; (defn nbubble []
 ;;   [:div.new-bubble])
 
-(defn nbubble [x y]
-  [:div.new-bubble {:style {:top x
-                            :left y}}])
+(defn nbubble [elem]
+  (let [img (. js/document getElementById (str (name (:side elem))))
+        rect (.getBoundingClientRect img)
+        x (+ (.-left rect) (-> elem :pt :x))
+        y (+ (.-top rect) (-> elem :pt :y))]
+    [:div.new-bubble {:style {:top y
+                              :left x}}]))
+
+;; (do (reset! nb []) (swap! nb conj {:x 10 :y 10}))
 
 (defn animation-comp []
-  (let [cl (r/atom "main-bubble")
-        cln (r/atom false)
-        nb (r/atom [])]
-    (fn []
-      [:div.container
-       [:div {:class @cl :on-click (fn [e] (do (println (.-clientX e)) (swap! nb conj nbubble)))} ]
-       [:div.bubble-container
-        (for [i (range (count @nb))]
-          ^{:key i} [nbubble])]
-        #_[:div {:class (:class @cl)
-                 :on-click (fn [e] (println @cl) (reset! cl {:class "new-bubble"}))}]])))
+  (let [nb @(rf/subscribe [:anim-elems])]
+    [:div.bubble-container
+     (for [[i elem] (map-indexed vector nb)]
+       ^{:key i} [nbubble elem])]
+       ))
 
 (defn battle-comp []
   (let [battle-title @(rf/subscribe [:battle-title])]
     [:div.container
-     ;; [animation-comp]
+     [animation-comp]
      [:div.row [:h1.text-xs-center battle-title]]
      [stat-comp]
      ;; [battle-titles]
