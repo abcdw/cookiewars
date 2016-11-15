@@ -18,6 +18,82 @@ body {
 .navbar-nav .nav-link + .nav-link {
   margin-left: 0;
 }
+
+.scale-small {
+  -webkit-animation: small 0.2s ease-out forwards;
+  -moz-animation: small 0.2s ease-out forwards;
+  animation: small 0.2s ease-out forwards;
+}
+
+.scale-large {
+  -webkit-animation: large 0.4s ease-out forwards;
+  -moz-animation: large 0.4s ease-out forwards;
+  animation: large 0.4s ease-out forwards;
+}
+
+.bubble-container {
+  height: 50px;
+  width: 50px;
+  overflow: visible;
+  margin: 0 auto;
+}
+
+.new-bubble {
+  position: absolute;
+  z-index: 1;
+  background: rgba(0,173,239,0.4);
+  height: 5px;
+  width: 5px;
+  border-radius: 50%;
+  -webkit-animation: pop 2.5s ease-out forwards;
+  -moz-animation: pop 2.5s ease-out forwards;
+  animation: pop 2.5s ease-out forwards;
+}
+
+.main-bubble {
+  position: absolute;
+  z-index: 100;
+  background: #00adef;
+  height: 5px;
+  width: 5px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+@-webkit-keyframes pop {
+  0% {
+    -webkit-transform: scale(0);
+    opacity: 1;
+  }
+  100% {
+    -webkit-transform: scale(15);
+    opacity: 0;
+  }
+}
+
+@-moz-keyframes pop {
+  0% {
+    -moz-transform: scale(0);
+    opacity: 1;
+  }
+  100% {
+    -moz-transform: scale(15);
+    opacity: 0;
+  }
+}
+
+@keyframes pop {
+  0% {
+    transform: scale(0);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(15);
+    opacity: 0;
+  }
+}
+
+
 @media (min-width: 34em) {
   .navbar-brand {
     float: left;
@@ -66,4 +142,3 @@ body {
         transform: rotate(360deg);
     }
 }
-

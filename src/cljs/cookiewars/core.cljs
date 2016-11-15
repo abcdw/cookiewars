@@ -148,9 +148,33 @@
      ;; [:div.row [:hr]]
      ]))
 
+(def cls (r/atom "main-bubble scale-small"))
+
+
+;; (defn nbubble []
+;;   [:div.new-bubble])
+
+(defn nbubble [x y]
+  [:div.new-bubble {:style {:top x
+                            :left y}}])
+
+(defn animation-comp []
+  (let [cl (r/atom "main-bubble")
+        cln (r/atom false)
+        nb (r/atom [])]
+    (fn []
+      [:div.container
+       [:div {:class @cl :on-click (fn [e] (do (println (.-clientX e)) (swap! nb conj nbubble)))} ]
+       [:div.bubble-container
+        (for [i (range (count @nb))]
+          ^{:key i} [nbubble])]
+        #_[:div {:class (:class @cl)
+                 :on-click (fn [e] (println @cl) (reset! cl {:class "new-bubble"}))}]])))
+
 (defn battle-comp []
   (let [battle-title @(rf/subscribe [:battle-title])]
     [:div.container
+     ;; [animation-comp]
      [:div.row [:h1.text-xs-center battle-title]]
      [stat-comp]
      ;; [battle-titles]
