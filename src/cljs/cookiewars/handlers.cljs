@@ -29,17 +29,18 @@
  :inc
  (fn [db [_ side]]
    (->
-    (update-in db [:battle side :count] inc)
-    (update-in [:battle side :clicks] inc))))
+    (update-in db [:config side :count] inc)
+    (update-in [:config side :clicks] inc))))
 
 (reg-event-db
  :update-stats
  (fn [db [_ stats]]
-   (let [st (merge stats {:updated-at (str (js/Date.))})]
-     ;; (println "updated-stats: " stats)
-     ;; (println "updated-stats: " (:count stats))
+   (assoc-in db [:stats] stats)))
 
-     (assoc-in db [:stats] st))))
+(reg-event-db
+ :update-config
+ (fn [db [_ config]]
+   (assoc-in db [:config] config)))
 
 (reg-event-db
  :click
@@ -59,7 +60,7 @@
 (reg-event-db
  :tick
  (fn [db [_ side]]
-     (update-in db [:battle side :count] dec-count)))
+     (update-in db [:config side :count] dec-count)))
 
 (reg-event-db
  :request-updates
@@ -76,8 +77,9 @@
    (let [ev (read-string event)
          cmd (:cmd ev)]
      (do
-       (println ":event" (read-string event))
+       ;; (println ":event" (read-string event))
        (case cmd
          "inc" (dispatch [:inc (:side ev)])
-         "update-stats" (dispatch [:update-stats (:stats ev)]))
+         "update-stats" (dispatch [:update-stats (:stats ev)])
+         "update-config" (dispatch [:update-config (:config ev)]))
        db))))

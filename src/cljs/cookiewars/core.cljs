@@ -10,7 +10,8 @@
             [re-frame.core :as rf]
             [re-frisk.core :refer [enable-re-frisk!]]
             [reagent.core :as r]
-            [secretary.core :as secretary])
+            [secretary.core :as secretary]
+            goog.string.format)
   (:import goog.History))
 
 (defn nav-link [uri title page collapsed?]
@@ -87,9 +88,15 @@
 (defn participant [side]
   (let [img-url @(rf/subscribe [:img side])
         count @(rf/subscribe [:count side])
-        clicks @(rf/subscribe [:clicks side])]
+        title @(rf/subscribe [:title side])
+        clicks @(rf/subscribe [:clicks side])
+        local-clicks @(rf/subscribe [:local-clicks side])]
 
        [:div.container
+        [:div.row
+         [:h3.text-xs-center title]]
+        [:div.row
+         [:h3.text-xs-center clicks]]
         [:div.row
          [:div.text-xs-center
           [:img {:src img-url
@@ -101,7 +108,7 @@
 
         [:div.row
          [:div.text-xs-center
-          (str "clicks: " (int clicks) "!")]]
+          (str "your clicks: " (int local-clicks) "!")]]
 
         [:div.row
          [:div.text-xs-center
@@ -120,19 +127,34 @@
 
 (defn stat-comp []
   (let [stats @(rf/subscribe [:stats])
-        online-count (:count stats)]
-    [:div.row
-     [:hr]
-     [:div.col-xs-6
-      [:h3 (str "Online: " online-count)]]]))
+        {:keys [users time-left started]} stats
+        seconds (goog.string.format "%02d" (mod time-left 60))
+        minutes (quot time-left 60)
+        status-line (if (= 0 time-left)
+                      "Finished"
+                      (str "Remaining time: "
+                           (if (not started)
+                             "not started"
+                             (str minutes ":" seconds))))]
+    [:div.container
+     ;; [:hr]
+     [:div.row
+      [:div.col-xs-12
+       [:h5.text-xs-center status-line]]
+      [:div.row [:hr]]
+      ;; [:div.col-xs-6
+      ;;  [:h3 (str "Online: " users)]]
+      ]
+     ;; [:div.row [:hr]]
+     ]))
 
 (defn battle-comp []
   (let [battle-title @(rf/subscribe [:battle-title])]
     [:div.container
      [:div.row [:h1.text-xs-center battle-title]]
-     [battle-titles]
-     [battle-field]
-     [stat-comp]]))
+     [stat-comp]
+     ;; [battle-titles]
+     [battle-field]]))
 
 ;; ---------------------------------------
 
