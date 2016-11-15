@@ -175,8 +175,11 @@
         rect (.getBoundingClientRect img)
         x (+ (.-left rect) (-> elem :pt :x))
         y (+ (.-top rect) (-> elem :pt :y))]
-    [:div.new-bubble {:style {:top y
-                              :left x}}]))
+    [:div {:class (case (:tp elem)
+                    2 "admin-animation"
+                    "bubble-animation")
+           :style {:top y
+                   :left x}}]))
 
 ;; (do (reset! nb []) (swap! nb conj {:x 10 :y 10}))
 
