@@ -70,16 +70,19 @@
 ;;   ;; (println "messages sended")
 ;;   (Thread/sleep 1000)
 ;;   (recur))
+(defn update-user-count [f]
+  (swap! first-comp assoc-in [:stats :update-at] (java.util.Date.))
+  (swap! first-comp update-in [:stats :users] f))
 
 (defn connect! [channel]
   (println "channel opened:" channel)
   (swap! channels conj channel)
-  (swap! first-comp update-in [:stats :users] inc))
+  (update-user-count inc))
 
 (defn disconnect! [channel status]
   (println "channel closed:" status)
   (swap! channels #(remove #{channel} %))
-  (swap! first-comp update-in [:stats :users] dec))
+  (update-user-count dec))
 
 (defn handle-msg [msg channel]
   ;; (println "new message from client: " msg)
