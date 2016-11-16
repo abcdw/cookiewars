@@ -16,7 +16,7 @@
 
 (def competitions [{:stats {:users 0
                             :started false
-                            :time-left 15
+                            :time-left 30
                             :clicks {:left 0 :right 0}
                             :update-at (java.util.Date.)}
                     :channels #{}
