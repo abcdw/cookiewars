@@ -38,7 +38,8 @@
   [:div.container
    [:div.row
     [:div.col-md-12
-     "Cookiewars is real"]]])
+     [:h3.text-xs-center "Cookiewars is real"]]]
+   [:div.row [:a {:href "http://eepurl.com/couoTX"} "Subscribe"] " for news about project."]])
 
 
 ;; ----------- ws stuff -------------------
